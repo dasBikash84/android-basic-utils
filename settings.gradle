@@ -1,0 +1,2 @@
+include ':android_basic_utils'
+rootProject.name='Android Basic Utils'
