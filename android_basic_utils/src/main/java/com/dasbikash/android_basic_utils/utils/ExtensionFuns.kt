@@ -9,6 +9,8 @@ import android.os.Looper
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -126,3 +128,16 @@ suspend fun <T:Any> runSuspended(task:()->T):T {
     }
 }
 suspend fun coroutineContext(): CoroutineContext = suspendCoroutine { it.resume(it.context) }
+
+
+fun LifecycleOwner.runIfNotDestroyed(task:()->Any?){
+    if (this.lifecycle.currentState != Lifecycle.State.DESTROYED){
+        task()
+    }
+}
+
+fun LifecycleOwner.runIfResumed(task:()->Any?){
+    if (this.lifecycle.currentState == Lifecycle.State.RESUMED){
+        task()
+    }
+}
