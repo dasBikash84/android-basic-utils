@@ -97,16 +97,16 @@ object SharedPreferenceUtils {
     fun removeKey(context: Context,key: String)
             = getSpEditor(context).remove(key).apply()
 
-    fun check(context: Context,key: String):Boolean
+    fun checkIfExists(context: Context, key: String):Boolean
             = getSharedPreferences(context).contains(key)
 
-    fun clear(context: Context):Boolean = getSpEditor(context).clear().commit()
+    fun clearAll(context: Context):Boolean = getSpEditor(context).clear().commit()
 
-    fun registerOnSharedPreferenceChangeListener(context: Context,
-                                                 listener: SharedPreferences.OnSharedPreferenceChangeListener)
+    fun registerOnChangeListener(context: Context,
+                                 listener: SharedPreferences.OnSharedPreferenceChangeListener)
             = getSharedPreferences(context).registerOnSharedPreferenceChangeListener(listener)
 
-    fun unRegisterOnSharedPreferenceChangeListener(context: Context,
-                                                    listener: SharedPreferences.OnSharedPreferenceChangeListener)
+    fun unRegisterOnChangeListener(context: Context,
+                                   listener: SharedPreferences.OnSharedPreferenceChangeListener)
             = getSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(listener)
 }
