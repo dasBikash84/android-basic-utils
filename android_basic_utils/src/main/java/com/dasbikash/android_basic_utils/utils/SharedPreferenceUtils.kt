@@ -14,6 +14,10 @@
 package com.dasbikash.android_basic_utils.utils
 
 import android.content.Context
+import android.content.SharedPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 object SharedPreferenceUtils {
 
@@ -27,46 +31,82 @@ object SharedPreferenceUtils {
         DEFAULT_BOOLEAN(false)
     }
 
+    private fun getSharedPreferences(context: Context): SharedPreferences =
+        context.getSharedPreferences(SP_FILE_KEY, Context.MODE_PRIVATE)
+
+    private fun getSpEditor(context: Context): SharedPreferences.Editor =
+        getSharedPreferences(context).edit()
+
     /**
      * Supports Long,Int,Float,String and Boolean data storing
      * */
     fun <T : Any> saveData(context: Context, data: T, key: String) {
-
-        val sharedPref = context.getSharedPreferences(
-            SP_FILE_KEY, Context.MODE_PRIVATE)
-
-        val editor = sharedPref.edit()
-
-        when (data) {
-            is Long     -> editor.putLong(key, data as Long)
-            is Int      -> editor.putInt(key, data as Int)
-            is Float    -> editor.putFloat(key, data as Float)
-            is String   -> editor.putString(key, data as String)
-            is Boolean  -> editor.putBoolean(key, data as Boolean)
-            else        -> throw IllegalArgumentException()
+        getSpEditor(context).apply{
+            GlobalScope.launch(Dispatchers.IO) {
+                when (data) {
+                    is Long     -> putLong(key, data as Long)
+                    is Int      -> putInt(key, data as Int)
+                    is Float    -> putFloat(key, data as Float)
+                    is String   -> putString(key, data as String)
+                    is Boolean  -> putBoolean(key, data as Boolean)
+                    is Double  -> putFloat(key, data as Float)
+                    else        -> throw IllegalArgumentException()
+                }
+                apply()
+            }
         }
-        editor.apply()
     }
 
     /**
      * Supports Long,Int,Float,String and Boolean data storing
      * Has to provide default data of esired type
      * */
-    fun getData(context: Context, defaultValue: DefaultValues, key: String): Any {
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    private fun getData(context: Context, defaultValue: DefaultValues, key: String): Any {
 
-        val sharedPref =
-                context.getSharedPreferences(SP_FILE_KEY, Context.MODE_PRIVATE)
-
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        when (defaultValue.value) {
-            is Long     -> return sharedPref.getLong(key, defaultValue.value)
-            is Int      -> return sharedPref.getInt(key, defaultValue.value)
-            is Float    -> return sharedPref.getFloat(key, defaultValue.value)
-            is String   -> return sharedPref.getString(key, defaultValue.value) as Any
-            is Boolean  -> return sharedPref.getBoolean(key, defaultValue.value)
-            else        -> throw IllegalArgumentException()
+        return getSharedPreferences(context).let {
+            return@let when (defaultValue.value) {
+                is Long     -> it.getLong(key, defaultValue.value)
+                is Int      -> it.getInt(key, defaultValue.value)
+                is Float    -> it.getFloat(key, defaultValue.value)
+                is String   -> it.getString(key, defaultValue.value)!!
+                is Boolean  -> it.getBoolean(key, defaultValue.value)
+                else        -> throw IllegalArgumentException()
+            }
         }
     }
 
+    fun getStringData(context: Context, key: String):String
+            = getData(context,DefaultValues.DEFAULT_STRING,key) as String
 
+    fun getLongData(context: Context, key: String):Long
+            = getData(context,DefaultValues.DEFAULT_LONG,key) as Long
+
+    fun getIntData(context: Context, key: String):Int
+            = getData(context,DefaultValues.DEFAULT_INT,key) as Int
+
+    fun getFloatData(context: Context, key: String):Float
+            = getData(context,DefaultValues.DEFAULT_FLOAT,key) as Float
+
+    fun getBooleanData(context: Context, key: String):Boolean
+            = getData(context,DefaultValues.DEFAULT_BOOLEAN,key) as Boolean
+
+    fun getDoubleData(context: Context, key: String):Double
+            = (getData(context,DefaultValues.DEFAULT_FLOAT,key) as Float).toDouble()
+
+    fun removeKey(context: Context,key: String)
+            = getSpEditor(context).remove(key).apply()
+
+    fun check(context: Context,key: String):Boolean
+            = getSharedPreferences(context).contains(key)
+
+    fun clear(context: Context):Boolean = getSpEditor(context).clear().commit()
+
+    fun registerOnSharedPreferenceChangeListener(context: Context,
+                                                 listener: SharedPreferences.OnSharedPreferenceChangeListener)
+            = getSharedPreferences(context).registerOnSharedPreferenceChangeListener(listener)
+
+    fun unRegisterOnSharedPreferenceChangeListener(context: Context,
+                                                    listener: SharedPreferences.OnSharedPreferenceChangeListener)
+            = getSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(listener)
 }
