@@ -301,7 +301,8 @@ fun LifecycleOwner.runIfNotDestroyed(task:()->Any?){
  * Task will run only if LifecycleOwner is resumed
  *
  * @param task posted functional parameter
- * */fun LifecycleOwner.runIfResumed(task:()->Any?){
+ * */
+fun LifecycleOwner.runIfResumed(task:()->Any?){
     if (this.lifecycle.currentState == Lifecycle.State.RESUMED){
         task()
     }
@@ -312,7 +313,8 @@ fun LifecycleOwner.runIfNotDestroyed(task:()->Any?){
  * Task will run only if LifecycleOwner is created
  *
  * @param task posted functional parameter
- * */fun LifecycleOwner.runIfCreated(task:()->Any?){
+ * */
+fun LifecycleOwner.runIfCreated(task:()->Any?){
     if (this.lifecycle.currentState == Lifecycle.State.CREATED){
         task()
     }
