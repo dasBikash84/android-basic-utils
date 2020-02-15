@@ -5,18 +5,37 @@ import android.content.DialogInterface
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 
+/**
+ * Helper class for Alert Dialog related operations.
+ *
+ * @author Bikash Das(das.bikash.dev@gmail.com)
+ * */
 object DialogUtils {
 
     private const val DEFAULT_POS_BUTTON_TEXT = "Ok"
     private const val DEFAULT_NEG_BUTTON_TEXT = "Cancel"
     private const val DEFAULT_NEUTRAL_BUTTON_TEXT = ""
 
+    /**
+     * Method for creating and showing Alert Dialog
+     *
+     * @param context | Android Context
+     * @param alertDialogDetails | AlertDialogDetails for subject dialog
+     * @return returns subject AlertDialog
+     * */
     fun showAlertDialog(context: Context,alertDialogDetails: AlertDialogDetails):AlertDialog{
         val dialog =  createAlertDialog(context,alertDialogDetails)
         dialog.show()
         return dialog
     }
 
+    /**
+     * Method for creating Alert Dialog
+     *
+     * @param context | Android Context
+     * @param alertDialogDetails | AlertDialogDetails for subject dialog
+     * @return returns subject AlertDialog
+     * */
     fun createAlertDialog(context: Context,alertDialogDetails: AlertDialogDetails):AlertDialog{
         val dialog =  getAlertDialogBuilder(context,alertDialogDetails).create()
         dialog.getButton(DialogInterface.BUTTON_POSITIVE)?.isAllCaps = false
@@ -50,8 +69,10 @@ object DialogUtils {
         return dialogBuilder
     }
 
-
-    data class AlertDialogDetails(
+    /**
+     * class to hold parameters regarding Alert Dialog
+     * */
+    class AlertDialogDetails(
         val title:String = "",
         val message:String = "",
         val positiveButtonText:String = DEFAULT_POS_BUTTON_TEXT,
