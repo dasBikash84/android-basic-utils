@@ -141,3 +141,9 @@ fun LifecycleOwner.runIfResumed(task:()->Any?){
         task()
     }
 }
+
+fun LifecycleOwner.runIfCreated(task:()->Any?){
+    if (this.lifecycle.currentState == Lifecycle.State.CREATED){
+        task()
+    }
+}

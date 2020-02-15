@@ -29,41 +29,6 @@ object DisplayUtils {
     fun pxToDp(px: Int, context: Context): Float =
             (px / context.getResources().getDisplayMetrics().density)
 
-    /*fun showShortSnack(coordinatorLayout: CoordinatorLayout, message: String,
-                       text:CharSequence?=null,listner:()->Unit= {  }) {
-        val snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT)
-        text?.let {
-            setSnackbarAction(snackbar, it, listner)
-        }
-        runOnMainThread (task = {
-            snackbar.show()
-        })
-    }
-
-    fun showLongSnack(coordinatorLayout: CoordinatorLayout, message: String,
-                      text:CharSequence?=null,listner:()->Unit= {  }) {
-        val snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_LONG)
-        text?.let {
-            setSnackbarAction(snackbar, it, listner)
-        }
-        runOnMainThread (task =  {
-            snackbar.show()
-        })
-    }
-
-    private fun setSnackbarAction(
-        snackbar: Snackbar,
-        it: CharSequence,
-        listner: () -> Unit
-    ) {
-        snackbar
-            .setAction(it, View.OnClickListener { listner() })
-            .setActionTextColor(Color.WHITE)
-            .getView()
-            .findViewById<TextView>(R.id.snackbar_action)
-            .setAllCaps(false)
-    }*/
-
     fun showShortToast(context: Context, message: String) {
         runOnMainThread (task =  {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
