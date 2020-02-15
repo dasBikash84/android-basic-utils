@@ -110,7 +110,9 @@ class SharedPreferenceUtils(private val SP_FILE_KEY:String){
         private val DEFAULT_SP_FILE_KEY:String =
             "com.dasbikash.android_basic_utils.utils.SP_FILE_KEY"
 
-        fun getInstance(SP_FILE_KEY:String = DEFAULT_SP_FILE_KEY)
-            = SharedPreferenceUtils(SP_FILE_KEY)
+        @JvmStatic
+        fun getInstance(SP_FILE_KEY:String = DEFAULT_SP_FILE_KEY) = SharedPreferenceUtils(SP_FILE_KEY)
+        @JvmStatic
+        fun getDefaultInstance() = SharedPreferenceUtils(DEFAULT_SP_FILE_KEY)
     }
 }
