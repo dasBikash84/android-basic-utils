@@ -5,8 +5,20 @@ import java.io.File
 import java.util.*
 
 
+/**
+ * Helper class for File related operations.
+ *
+ * @author Bikash Das(das.bikash.dev@gmail.com)
+ * */
 object FileUtils {
 
+    /**
+     * Method for saving file on internal storage
+     *
+     * @param file | Subject file
+     * @param context | Android Context
+     * @param desiredFileName | File name for saving
+     * */
     fun saveFileOnInternalStorage(file:File,context: Context,desiredFileName:String?=null){
 
         val fileName:String
@@ -19,6 +31,13 @@ object FileUtils {
         file.copyTo(newFile)
     }
 
+    /**
+     * Method for reading file from internal storage
+     *
+     * @param fileName | Subject file name
+     * @param context | Android Context
+     * @return File if found else null
+     * */
     fun readFileFromInternalStorage(context: Context,fileName:String):File?{
 
         val dir = File(context.filesDir.absolutePath)
