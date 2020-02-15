@@ -19,17 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-object SharedPreferenceUtils {
-
-    private const val SP_FILE_KEY = "com.dasbikash.android_basic_utils.utils.SP_FILE_KEY"
-
-    enum class DefaultValues private constructor(val value: Any) {
-        DEFAULT_STRING(""),
-        DEFAULT_LONG(0L),
-        DEFAULT_INT(0),
-        DEFAULT_FLOAT(0F),
-        DEFAULT_BOOLEAN(false)
-    }
+class SharedPreferenceUtils(private val SP_FILE_KEY:String){
 
     private fun getSharedPreferences(context: Context): SharedPreferences =
         context.getSharedPreferences(SP_FILE_KEY, Context.MODE_PRIVATE)
@@ -107,4 +97,20 @@ object SharedPreferenceUtils {
     fun unRegisterOnChangeListener(context: Context,
                                    listener: SharedPreferences.OnSharedPreferenceChangeListener)
             = getSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(listener)
+
+    companion object{
+        private enum class DefaultValues(val value: Any) {
+            DEFAULT_STRING(""),
+            DEFAULT_LONG(0L),
+            DEFAULT_INT(0),
+            DEFAULT_FLOAT(0F),
+            DEFAULT_BOOLEAN(false)
+        }
+
+        private val DEFAULT_SP_FILE_KEY:String =
+            "com.dasbikash.android_basic_utils.utils.SP_FILE_KEY"
+
+        fun getInstance(SP_FILE_KEY:String = DEFAULT_SP_FILE_KEY)
+            = SharedPreferenceUtils(SP_FILE_KEY)
+    }
 }
