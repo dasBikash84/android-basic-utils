@@ -1,5 +1,4 @@
 # android-basic-utils
-Android Basic Utils
 
 <h3>Library containing utility classes for most common android tasks.</h3>
 
