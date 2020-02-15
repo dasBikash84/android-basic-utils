@@ -47,10 +47,9 @@ object SharedPreferenceUtils {
                     is Long     -> putLong(key, data as Long)
                     is Int      -> putInt(key, data as Int)
                     is Float    -> putFloat(key, data as Float)
-                    is String   -> putString(key, data as String)
                     is Boolean  -> putBoolean(key, data as Boolean)
                     is Double  -> putFloat(key, data as Float)
-                    else        -> throw IllegalArgumentException()
+                    else        -> putString(key, data.toString())
                 }
                 apply()
             }
@@ -69,9 +68,8 @@ object SharedPreferenceUtils {
                 is Long     -> it.getLong(key, defaultValue.value)
                 is Int      -> it.getInt(key, defaultValue.value)
                 is Float    -> it.getFloat(key, defaultValue.value)
-                is String   -> it.getString(key, defaultValue.value)!!
                 is Boolean  -> it.getBoolean(key, defaultValue.value)
-                else        -> throw IllegalArgumentException()
+                else        -> it.getString(key, defaultValue.value as String)!!
             }
         }
     }
