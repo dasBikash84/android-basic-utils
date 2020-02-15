@@ -4,6 +4,8 @@ import android.util.Log
 
 /**
  * Helper class for logging
+ *
+ * @author Bikash Das
  */
 object LoggerUtils {
     private const val TAG = "AU>>"
@@ -15,7 +17,6 @@ object LoggerUtils {
     /**
      * Optional method for configuring logger
      *
-     * @author Bikash Das
      * @param enabled for enable/disable logging.
      * @param tag for setting logger tag preamble.
      * */
@@ -24,6 +25,11 @@ object LoggerUtils {
         LoggerUtils.tag = tag
     }
 
+    /**
+     * For printing error stacktrace
+     *
+     * @param ex subject throwable
+     * */
     fun debugStackTrace(ex: Throwable) {
         if (enabled) {
             logStackTrace(ex)
@@ -33,7 +39,6 @@ object LoggerUtils {
     /**
      * For printing log message
      *
-     * @author Bikash Das
      * @param message for logging
      * @param type caller class type
      * @sample
@@ -44,6 +49,14 @@ object LoggerUtils {
         }
     }
 
+
+    /**
+     * For printing string form of any object as log message
+     *
+     * @param obj subject Object for logging
+     * @param type caller class type
+     * @sample
+     * */
     fun <T> debugLog(obj: Any, type: Class<T>) {
         return debugLog(obj.toString(),type)
     }
@@ -65,7 +78,6 @@ object LoggerUtils {
 /**
  * For printing log message
  *
- * @author Bikash Das
  * @param message for logging
  * */
 fun Any.debugLog(message: String){
@@ -75,7 +87,6 @@ fun Any.debugLog(message: String){
 /**
  * For printing string version of an object
  *
- * @author Bikash Das
  * @param model subject object
  * */
 fun Any.debugLog(model: Any){
@@ -85,7 +96,6 @@ fun Any.debugLog(model: Any){
 /**
  * For printing error stacktrace
  *
- * @author Bikash Das
  * @param ex subject throwable
  * */
 fun Any.debugStackTrace(ex: Throwable){
