@@ -3,6 +3,11 @@ package com.dasbikash.android_basic_utils.utils
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Helper class for Date related operations.
+ *
+ * @author Bikash Das(das.bikash.dev@gmail.com)
+ * */
 object DateUtils {
 
     const val SECOND_IN_MS: Long = 1000L
