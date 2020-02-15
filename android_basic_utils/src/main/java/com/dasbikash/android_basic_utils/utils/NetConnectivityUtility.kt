@@ -11,15 +11,22 @@ import android.os.Build
 import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
+/**
+ * Helper class for network state detection
+ *
+ * 'fun initialize(context: Context)' must be called
+ * on app start to to activate network state listener
+ *
+ * @author Bikash Das
+ */
 object NetConnectivityUtility : BroadcastReceiver() {
 
     private var mNoInternertToastShown = false
     private var mReceiverRegistered = false
     private const val NO_INTERNET_TOAST_MESSAGE = "No internet connection!!!"
-    private var mCurrentNetworkType =
-        NETWORK_TYPE.UN_INITIALIZED
+    private var mCurrentNetworkType = NETWORK_TYPE.UN_INITIALIZED
 
-    enum class NETWORK_TYPE {
+    private enum class NETWORK_TYPE {
         MOBILE, WIFI, WIMAX, ETHERNET, BLUETOOTH, DC, OTHER, UN_INITIALIZED
     }
 
@@ -28,6 +35,12 @@ object NetConnectivityUtility : BroadcastReceiver() {
         LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent)
     }
 
+    /**
+     * Callback Method | Will be called on network state change
+     *
+     * @param enabled for enable/disable logging.
+     * @param tag for setting logger tag preamble.
+     * */
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent != null && intent.action != null &&
                 intent.action!!.equals(CONNECTIVITY_CHANGE_FILTER, ignoreCase = true)) {
@@ -92,7 +105,13 @@ object NetConnectivityUtility : BroadcastReceiver() {
 
     private val NETWORK_AVAILABLE_BROADCAST = "NetConnectivityUtility.net_available"
 
-    val intentFilterForNetworkAvailableBroadcastReceiver: IntentFilter
+    /**
+     * Provides intent filter for getting registered into
+     * 'Network Available Broadcast Receiver'
+     *
+     * @return IntentFilter
+     * */
+    val intentFilterFor: IntentFilter
         get() = IntentFilter(NETWORK_AVAILABLE_BROADCAST)
 
     private val CONNECTIVITY_CHANGE_FILTER = "android.net.conn.CONNECTIVITY_CHANGE"
@@ -100,28 +119,42 @@ object NetConnectivityUtility : BroadcastReceiver() {
     private val intentFilterForConnectivityChangeBroadcastReceiver: IntentFilter
         get() = IntentFilter(CONNECTIVITY_CHANGE_FILTER)
 
+    /**
+     * To check if connected to mobile network
+     *
+     * @return true if connected to mobile network else false
+     * */
     val isOnMobileDataNetwork: Boolean
         get() {
             return mCurrentNetworkType == NETWORK_TYPE.MOBILE
         }
 
+    /**
+     * To check if connected to Wify network
+     *
+     * @return true if connected to mobile network else false
+     * */
+    val isOnWify: Boolean
+        get() {
+            return mCurrentNetworkType == NETWORK_TYPE.WIFI
+        }
+
+    /**
+     * To check network connectivity status
+     *
+     * @return true if connected else false
+     * */
     val isConnected: Boolean
         get() {
-            return mCurrentNetworkType != NETWORK_TYPE.DC
+            return (mCurrentNetworkType != NETWORK_TYPE.DC) &&
+                    (mCurrentNetworkType != NETWORK_TYPE.UN_INITIALIZED)
         }
 
-    val isInitialize: Boolean
-        get() {
-            return mCurrentNetworkType != NETWORK_TYPE.UN_INITIALIZED
-        }
-
-    fun refreshNetworkStatus(context: Context): NETWORK_TYPE {
-        if (mCurrentNetworkType == NETWORK_TYPE.UN_INITIALIZED) {
-            refreshNetworkType(context)
-        }
-        return mCurrentNetworkType
-    }
-
+    /**
+     * Method to initialize class. Should be called on app start up.
+     *
+     * @param context Android Context
+     * */
     fun initialize(context: Context) {
         if (!mReceiverRegistered) {
             context.registerReceiver(this,
@@ -131,6 +164,12 @@ object NetConnectivityUtility : BroadcastReceiver() {
         }
     }
 
+    /**
+     * Will show no internet message toast
+     * if no internet and toast not shown already.
+     *
+     * @param context Android Context
+     * */
     fun showNoInternetToast(context: Context) {
         if (!isConnected && !mNoInternertToastShown) {
             mNoInternertToastShown = true
@@ -139,6 +178,11 @@ object NetConnectivityUtility : BroadcastReceiver() {
         }
     }
 
+    /**
+     * Will show no internet message toast if no internet.
+     *
+     * @param context Android Context
+     * */
     fun showNoInternetToastAnyWay(context: Context) {
         if (!isConnected) {
             mNoInternertToastShown = true
