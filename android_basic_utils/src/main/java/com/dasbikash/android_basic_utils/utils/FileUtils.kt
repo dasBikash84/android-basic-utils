@@ -1,12 +1,7 @@
 package com.dasbikash.android_basic_utils.utils
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
 import java.util.*
 
 
@@ -35,17 +30,5 @@ object FileUtils {
             }
         }
         return null
-    }
-
-    fun saveBitmap(context: Context,bitmap: Bitmap,desiredFileName:String){
-        val fileName = context.filesDir.absolutePath + "/" + desiredFileName
-        val file = File(fileName)
-        val os: OutputStream = BufferedOutputStream(FileOutputStream(file))
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
-        os.close()
-    }
-
-    fun fileToBitmap(file: File):Bitmap?{
-        return BitmapFactory.decodeFile(file.absolutePath)
     }
 }
