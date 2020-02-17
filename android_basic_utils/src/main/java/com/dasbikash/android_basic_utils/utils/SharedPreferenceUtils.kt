@@ -5,32 +5,61 @@ import android.content.SharedPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.Serializable
 
 /**
  * Helper class for Shared Preference related operations.
+ * Any Serializable object can be saved on shared preference
  *
  * @author Bikash Das(das.bikash.dev@gmail.com)
  * */
 class SharedPreferenceUtils(private val SP_FILE_KEY:String){
 
-    private fun getSharedPreferences(context: Context): SharedPreferences =
+    fun getSharedPreferences(context: Context): SharedPreferences =
         context.getSharedPreferences(SP_FILE_KEY, Context.MODE_PRIVATE)
 
-    private fun getSpEditor(context: Context): SharedPreferences.Editor =
+    fun getSpEditor(context: Context): SharedPreferences.Editor =
         getSharedPreferences(context).edit()
 
     /**
-     * Save object on Shared Preference
-     * Saves equivalent literal value for Long,Int,Float,Double & Boolean
-     * Saves String equivalent for other data type
+     * Method to save(blocking) Serializable object on Shared Preference
      *
      * @param context Android Context
-     * @param data subject object that is to be saved
+     * @param data subject Serializable object that is to be saved
      * @param key unique key to the object to be saved
      * */
-    fun <T : Any> saveData(context: Context, data: T, key: String) {
-        getSpEditor(context).apply{
-            GlobalScope.launch(Dispatchers.IO) {
+    fun saveDataSync(context: Context, data: Serializable, key: String) {
+        saveData(getSpEditor(context),data, key)
+    }
+
+    /**
+     * Method to save(async) Serializable object on Shared Preference
+     *
+     * @param context Android Context
+     * @param data subject Serializable object that is to be saved
+     * @param key unique key to the object to be saved
+     * */
+    fun saveData(context: Context, data: Serializable, key: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            saveData(getSpEditor(context),data, key)
+        }
+    }
+
+    /**
+     * Method to save(suspended) Serializable object on Shared Preference
+     *
+     * @param context Android Context
+     * @param data subject Serializable object that is to be saved
+     * @param key unique key to the object to be saved
+     * */
+    suspend fun saveDataSuspended(context: Context, data: Serializable, key: String) {
+        runSuspended {
+            saveData(getSpEditor(context),data, key)
+        }
+    }
+
+    private fun saveData(editor: SharedPreferences.Editor,data: Serializable, key: String){
+        /*
                 when (data) {
                     is Long     -> putLong(key, data as Long)
                     is Int      -> putInt(key, data as Int)
@@ -39,84 +68,41 @@ class SharedPreferenceUtils(private val SP_FILE_KEY:String){
                     is Double  -> putFloat(key, data as Float)
                     else        -> putString(key, data.toString())
                 }
-                apply()
-            }
-        }
-    }
-
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    private fun getData(context: Context, defaultValue: DefaultValues, key: String): Any {
-
-        return getSharedPreferences(context).let {
-            return@let when (defaultValue.value) {
-                is Long     -> it.getLong(key, defaultValue.value)
-                is Int      -> it.getInt(key, defaultValue.value)
-                is Float    -> it.getFloat(key, defaultValue.value)
-                is Boolean  -> it.getBoolean(key, defaultValue.value)
-                else        -> it.getString(key, defaultValue.value as String)!!
-            }
-        }
+        * */
+        editor.putString(key,data.toByteArray().toSerializedString())
+        editor.apply()
     }
 
     /**
-     * Retrieves String data from Shared Preferences
+     * Method to read serializable object from Shared Preference
      *
      * @param context Android Context
-     * @param key unique key to the saved object
-     * @return saved String if key found else empty String
+     * @param key unique key to the object to be saved
+     * @param exampleObj example object of subject type
      * */
-    fun getStringData(context: Context, key: String):String
-            = getData(context,DefaultValues.DEFAULT_STRING,key) as String
+    fun <T : Serializable> getData(context: Context, key: String,exampleObj:T): T? =
+        getData(context,key,exampleObj.javaClass)
 
     /**
-     * Retrieves Long data from Shared Preferences
+     * Method to read serializable object from Shared Preference
      *
      * @param context Android Context
-     * @param key unique key to the saved object
-     * @return saved Long value if key found else 0L
+     * @param key unique key to the object to be saved
+     * @param type subject class type
      * */
-    fun getLongData(context: Context, key: String):Long
-            = getData(context,DefaultValues.DEFAULT_LONG,key) as Long
+    fun <T : Serializable> getData(context: Context, key: String,type:Class<T>): T? {
 
-    /**
-     * Retrieves Int data from Shared Preferences
-     *
-     * @param context Android Context
-     * @param key unique key to the saved object
-     * @return saved Int value if key found else 0
-     * */
-    fun getIntData(context: Context, key: String):Int
-            = getData(context,DefaultValues.DEFAULT_INT,key) as Int
-
-    /**
-     * Retrieves Float data from Shared Preferences
-     *
-     * @param context Android Context
-     * @param key unique key to the saved object
-     * @return saved Float value if key found else 0.0F
-     * */
-    fun getFloatData(context: Context, key: String):Float
-            = getData(context,DefaultValues.DEFAULT_FLOAT,key) as Float
-
-    /**
-     * Retrieves Boolean data from Shared Preferences
-     *
-     * @param context Android Context
-     * @param key unique key to the saved object
-     * @return saved Boolean value if key found else false
-     * */
-    fun getBooleanData(context: Context, key: String):Boolean
-            = getData(context,DefaultValues.DEFAULT_BOOLEAN,key) as Boolean
-
-    /**
-     * Retrieves Double data from Shared Preferences
-     *
-     * @param context Android Context
-     * @param key unique key to the saved object
-     * @return saved Double value if key found else 0.0
-     * */
-    fun getDoubleData(context: Context, key: String):Double
-            = (getData(context,DefaultValues.DEFAULT_FLOAT,key) as Float).toDouble()
+        getSharedPreferences(context).let {
+            if (it.contains(key)){
+                try {
+                    return it.getString(key,"")!!.deserialize().toSerializable(type)
+                }catch (ex:Throwable){
+                    ex.printStackTrace()
+                }
+            }
+        }
+        return null
+    }
 
     /**
      * Removes object with given key from Shared Preferences
@@ -161,13 +147,6 @@ class SharedPreferenceUtils(private val SP_FILE_KEY:String){
             = getSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(listener)
 
     companion object{
-        private enum class DefaultValues(val value: Any) {
-            DEFAULT_STRING(""),
-            DEFAULT_LONG(0L),
-            DEFAULT_INT(0),
-            DEFAULT_FLOAT(0F),
-            DEFAULT_BOOLEAN(false)
-        }
 
         private val DEFAULT_SP_FILE_KEY:String =
             "com.dasbikash.android_basic_utils.utils.SP_FILE_KEY"
