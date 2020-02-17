@@ -9,31 +9,45 @@ import java.io.Serializable
 
 /**
  * Helper class for Shared Preference related operations.
- * Any Serializable object can be saved on shared preference
+ * Any <b>Serializable</b> object including
+ * object of Long, Int, Float, Boolean, String types
+ * can be saved on shared preference
  *
  * @author Bikash Das(das.bikash.dev@gmail.com)
  * */
 class SharedPreferenceUtils(private val SP_FILE_KEY:String){
 
+    /**
+     * Method to get hold of subject 'SharedPreferences' instance
+     *
+     * @param context Android Context
+     * @return returns instance of subject 'SharedPreferences'
+     * */
     fun getSharedPreferences(context: Context): SharedPreferences =
         context.getSharedPreferences(SP_FILE_KEY, Context.MODE_PRIVATE)
 
+    /**
+     * Method to get hold of subject 'SharedPreferences.Editor' instance
+     *
+     * @param context Android Context
+     * @return returns instance of subject 'SharedPreferences.Editor'
+     * */
     fun getSpEditor(context: Context): SharedPreferences.Editor =
         getSharedPreferences(context).edit()
 
     /**
-     * Method to save(blocking) Serializable object on Shared Preference
+     * Method to save(blocking) object on Shared Preference
      *
      * @param context Android Context
      * @param data subject Serializable object that is to be saved
      * @param key unique key to the object to be saved
      * */
-    fun saveDataSync(context: Context, data: Serializable, key: String) {
-        saveData(getSpEditor(context),data, key)
+    fun saveDataSync(context: Context, data: Serializable, key: String):Boolean {
+        return saveData(getSpEditor(context),data, key)
     }
 
     /**
-     * Method to save(async) Serializable object on Shared Preference
+     * Method to save(async) object on Shared Preference
      *
      * @param context Android Context
      * @param data subject Serializable object that is to be saved
@@ -46,31 +60,29 @@ class SharedPreferenceUtils(private val SP_FILE_KEY:String){
     }
 
     /**
-     * Method to save(suspended) Serializable object on Shared Preference
+     * Method to save(suspended) object on Shared Preference
      *
      * @param context Android Context
      * @param data subject Serializable object that is to be saved
      * @param key unique key to the object to be saved
      * */
-    suspend fun saveDataSuspended(context: Context, data: Serializable, key: String) {
-        runSuspended {
+    suspend fun saveDataSuspended(context: Context, data: Serializable, key: String):Boolean {
+        return runSuspended {
             saveData(getSpEditor(context),data, key)
         }
     }
 
-    private fun saveData(editor: SharedPreferences.Editor,data: Serializable, key: String){
-        /*
-                when (data) {
-                    is Long     -> putLong(key, data as Long)
-                    is Int      -> putInt(key, data as Int)
-                    is Float    -> putFloat(key, data as Float)
-                    is Boolean  -> putBoolean(key, data as Boolean)
-                    is Double  -> putFloat(key, data as Float)
-                    else        -> putString(key, data.toString())
-                }
-        * */
-        editor.putString(key,data.toByteArray().toSerializedString())
+    private fun saveData(editor: SharedPreferences.Editor,data: Serializable, key: String):Boolean{
+        when (data) {
+            is Long     -> editor.putLong(key, data as Long)
+            is Int      -> editor.putInt(key, data as Int)
+            is Float    -> editor.putFloat(key, data as Float)
+            is Boolean  -> editor.putBoolean(key, data as Boolean)
+            is String  -> editor.putString(key, data.toString())
+            else  -> editor.putString(key,data.toByteArray().toSerializedString())
+        }
         editor.apply()
+        return true
     }
 
     /**
@@ -91,17 +103,26 @@ class SharedPreferenceUtils(private val SP_FILE_KEY:String){
      * @param type subject class type
      * */
     fun <T : Serializable> getData(context: Context, key: String,type:Class<T>): T? {
-
+        var retVal:T? = null
         getSharedPreferences(context).let {
             if (it.contains(key)){
                 try {
-                    return it.getString(key,"")!!.deserialize().toSerializable(type)
+                    retVal =  when {
+                        type.isAssignableFrom(Long::class.java) -> it.getLong(key, Long.MIN_VALUE)
+                        type.isAssignableFrom(Int::class.java) -> it.getInt(key, Int.MIN_VALUE)
+                        type.isAssignableFrom(Float::class.java) -> it.getFloat(key, Float.MIN_VALUE)
+                        type.isAssignableFrom(Boolean::class.java) -> it.getBoolean(key, false)
+                        type.isAssignableFrom(String::class.java) -> it.getString(key, "")
+                        else -> it.getString(key,"")!!.deserialize().toSerializable(type)
+                    } as T?
                 }catch (ex:Throwable){
                     ex.printStackTrace()
                 }
+            }else{
+                retVal = null
             }
         }
-        return null
+        return retVal
     }
 
     /**
