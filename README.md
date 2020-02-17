@@ -24,12 +24,12 @@ dependencies {
 ```
 
 ## Features
+- On top of android default, support added for `Serializable` type on [`Shared preferences`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/SharedPreferenceUtils.kt). Interface for accessing Shared preferences also simplified.  
+- View and view-controller related many utility [`extension`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/ExtensionFuns.kt) functions.
 - [`Network`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/NetConnectivityUtility.kt) status and type aquisition related tasks handling made very easy.
-- Very simple interface for [`Shared preference`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/SharedPreferenceUtils.kt) related operations. 
 - Utility class for Alert [`Dialog`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/DialogUtils.kt) related operations. 
 - Utility class for [`toast`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/DisplayUtils.kt) and other display related operations.
 - Configurable [`logger`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/LoggerUtils.kt) utility class.
-- View and view-controller related many utility [`extension`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/ExtensionFuns.kt) functions.
 
 - [`File`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/FileUtils.kt) and [`Date`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/DateUtils.kt) operation related utility functions.
 
