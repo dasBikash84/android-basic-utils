@@ -92,8 +92,8 @@ class SharedPreferenceUtils(private val SP_FILE_KEY:String){
      * @param key unique key to the object to be saved
      * @param exampleObj example object of subject type
      * */
-    fun <T : Serializable> getData(context: Context, key: String,exampleObj:T): T? =
-        getData(context,key,exampleObj.javaClass)
+//    fun <T : Serializable> getData(context: Context, key: String,exampleObj:T): T? =
+//        getData(context,key,exampleObj.javaClass)
 
     /**
      * Method to read serializable object from Shared Preference
