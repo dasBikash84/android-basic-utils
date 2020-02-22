@@ -3,9 +3,7 @@ package com.dasbikash.android_basic_utils.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
@@ -14,6 +12,8 @@ import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
 import java.text.NumberFormat
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
@@ -318,4 +318,51 @@ fun LifecycleOwner.runIfCreated(task:()->Any?){
     if (this.lifecycle.currentState == Lifecycle.State.CREATED){
         task()
     }
+}
+
+fun parcelableToByteArray(parcelable: Parcelable): ByteArray {
+    val parcel = Parcel.obtain()
+    parcelable.writeToParcel(parcel, 0)
+    val bytes = parcel.marshall()
+    parcel.recycle()
+    return bytes
+}
+
+
+fun <T : Parcelable> byteArrayToParcelable(bytes: ByteArray, creator: Parcelable.Creator<T>): T {
+    val parcel = byteArrayToParcel(bytes)
+    val data = creator.createFromParcel(parcel)
+    parcel.recycle()
+    return data
+}
+
+internal fun byteArrayToParcel(bytes: ByteArray): Parcel {
+    val parcel = Parcel.obtain()
+    parcel.unmarshall(bytes, 0, bytes.size)
+    parcel.setDataPosition(0)
+    return parcel
+}
+
+fun ByteArray.toCharArray():CharArray{
+    val charArray = CharArray(this.size)
+    for (i in 0..size-1){
+        charArray.set(i,get(i).toChar())
+    }
+    return charArray
+}
+
+fun CharArray.byteArray():ByteArray{
+    val bytes = ByteArray(this.size)
+    for (i in 0..size-1){
+        bytes.set(i,get(i).toByte())
+    }
+    return bytes
+}
+
+fun java.io.Serializable.toByteArray():ByteArray{
+    val buffer = ByteArrayOutputStream()
+    val oos = ObjectOutputStream(buffer)
+    oos.writeObject(this)
+    oos.close()
+    return buffer.toByteArray()
 }
