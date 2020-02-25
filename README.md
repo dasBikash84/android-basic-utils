@@ -24,8 +24,7 @@ dependencies {
 ```
 
 ## Features
-- [`Network`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/NetConnectivityUtility.kt) status and type aquisition related tasks handling made very easy.
-- Utility class for Alert [`Dialog`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/DialogUtils.kt) related operations. 
+- Utility class for Alert [`Dialog`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/DialogUtils.kt) related operations.
 - Configurable [`logger`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/LoggerUtils.kt) utility class.
 - [`File`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/FileUtils.kt) and [`Date`](https://github.com/dasBikash84/android-basic-utils/blob/master/android_basic_utils/src/main/java/com/dasbikash/android_basic_utils/utils/DateUtils.kt) operation related utility functions.
 

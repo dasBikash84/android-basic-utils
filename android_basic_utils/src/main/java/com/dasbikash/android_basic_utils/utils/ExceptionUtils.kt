@@ -1,6 +1,5 @@
 package com.dasbikash.android_basic_utils.utils
 
-import com.dasbikash.android_basic_utils.exceptions.NoInternertConnectionException
 import com.dasbikash.android_basic_utils.exceptions.NotOnMainThreadException
 import com.dasbikash.android_basic_utils.exceptions.OnMainThreadException
 import java.util.*
@@ -18,15 +17,15 @@ object ExceptionUtils {
             throw NotOnMainThreadException()
         }
     }
-    private fun throwExceptionIfNoInternetConnection(){
-        if (!NetConnectivityUtility.isConnected) {
-            throw NoInternertConnectionException();
-        }
-    }
-
-    fun checkRequestValidityBeforeNetworkAccess(){
-        throwExceptionIfNoInternetConnection()
-    }
+//    private fun throwExceptionIfNoInternetConnection(){
+//        if (!NetConnectivityUtility.isConnected) {
+//            throw NoInternertConnectionException();
+//        }
+//    }
+//
+//    fun checkRequestValidityBeforeNetworkAccess(){
+//        throwExceptionIfNoInternetConnection()
+//    }
 
     fun checkRequestValidityBeforeDatabaseAccess(){
         throwExceptionIfOnMainThred()
