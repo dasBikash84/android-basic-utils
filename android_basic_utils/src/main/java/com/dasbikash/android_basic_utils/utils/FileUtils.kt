@@ -1,7 +1,10 @@
 package com.dasbikash.android_basic_utils.utils
 
+import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 
@@ -50,4 +53,27 @@ object FileUtils {
         }
         return null
     }
+
+    suspend fun uriToFile(activity: Activity, uri: Uri, filename:String?=null):File?{
+        return runSuspended {
+            try {
+                val fName = filename ?: UUID.randomUUID().toString().take(12)
+                val tempFile = File.createTempFile(fName,"")
+                val fos = FileOutputStream(tempFile)
+                activity.getContentResolver().openInputStream(uri)?.let {
+                    it.copyTo(fos)
+                    it.close()
+                }
+                fos.close()
+                fos.flush()
+                return@runSuspended tempFile
+            }catch (ex:Throwable){
+                ex.printStackTrace()
+            }
+            return@runSuspended null
+        }
+    }
 }
+
+suspend fun Activity.uriToFile(uri: Uri, filename:String?=null):File? =
+    FileUtils.uriToFile(this,uri, filename)

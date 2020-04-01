@@ -35,3 +35,18 @@ fun Double.getCurrencyString():String{
 fun Long.getCurrencyString():String{
     return NumberFormat.getCurrencyInstance().format(this).substring(1)
 }
+
+internal suspend fun <T> runSuspended(task:()->T):T {
+    coroutineContext().let {
+        return withContext(it) {
+            return@withContext async(Dispatchers.IO) { task() }.await()
+        }
+    }
+}
+
+/**
+ * Extension function on access CoroutineContext from inside of any suspension function
+ *
+ * @return subject CoroutineContext
+ * */
+internal suspend fun coroutineContext(): CoroutineContext = suspendCoroutine { it.resume(it.context) }
