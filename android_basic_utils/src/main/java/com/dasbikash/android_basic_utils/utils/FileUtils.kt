@@ -22,7 +22,8 @@ object FileUtils {
      * @param context | Android Context
      * @param desiredFileName | File name for saving
      * */
-    fun saveFileOnInternalStorage(file:File,context: Context,desiredFileName:String?=null){
+    fun saveFileOnInternalStorage(file:File,context: Context,
+                                  desiredFileName:String?=null,overwrite: Boolean = false){
 
         val fileName:String
         if (desiredFileName==null){
@@ -31,7 +32,7 @@ object FileUtils {
             fileName = context.filesDir.absolutePath + "/" + desiredFileName
         }
         val newFile = File(fileName)
-        file.copyTo(newFile)
+        file.copyTo(newFile,overwrite)
     }
 
     /**
